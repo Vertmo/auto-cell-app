@@ -1,7 +1,18 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <gtk/gtk.h>
 
 #include "app_callback.h"
+#include "rules.h"
+
+int delay = -1;
+int SIZE_X = 20; int SIZE_Y = 20;
+int **world = NULL;
+int **playWorld = NULL;
+Rule *rule;
+
+GtkWidget *dA;
+guint timeoutTag;
 
 int main(int argc, char *argv[]) {
 	GtkWidget *window;
@@ -10,7 +21,6 @@ int main(int argc, char *argv[]) {
 	GtkWidget *menu;
 	GtkWidget *menuItem;
 	GtkWidget *hBox;
-	GtkWidget *pDA;
 
 	gtk_init(&argc, &argv);
 
@@ -31,15 +41,15 @@ int main(int argc, char *argv[]) {
 	menu = gtk_menu_new();
 
 	menuItem = gtk_menu_item_new_with_mnemonic("_New");
-	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(OnNew), (GtkWidget*) window);
+	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(on_new), (GtkWidget*) window);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuItem);
 
 	menuItem = gtk_menu_item_new_with_mnemonic("_Open");
-	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(OnOpen), (GtkWidget*) window);
+	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(on_open), (GtkWidget*) window);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuItem);
 
 	menuItem = gtk_menu_item_new_with_mnemonic("_Save");
-	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(OnSave), (GtkWidget*) window);
+	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(on_save), (GtkWidget*) window);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuItem);
 
 	menuItem = gtk_menu_item_new_with_mnemonic("_Automaton");
@@ -49,6 +59,10 @@ int main(int argc, char *argv[]) {
 	/* Rule menu */
 	menu = gtk_menu_new();
 
+	menuItem = gtk_menu_item_new_with_mnemonic("_Conway");
+	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(on_conway), (GtkWidget*) window);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuItem);
+
 	menuItem = gtk_menu_item_new_with_mnemonic("_Rule");
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);
@@ -57,11 +71,11 @@ int main(int argc, char *argv[]) {
 	menu = gtk_menu_new();
 
 	menuItem = gtk_menu_item_new_with_mnemonic("_Help");
-	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(OnHelp), (GtkWidget*) window);
+	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(on_help), (GtkWidget*) window);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuItem);
 
 	menuItem = gtk_menu_item_new_with_mnemonic("_About");
-	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(OnAbout), (GtkWidget*) window);
+	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(on_about), (GtkWidget*) window);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuItem);
 
 	menuItem = gtk_menu_item_new_with_mnemonic("?");
@@ -75,11 +89,19 @@ int main(int argc, char *argv[]) {
 	gtk_box_pack_start(GTK_BOX(mainBox), hBox, FALSE, FALSE, 0);
 
 	/* Drawing Area (view of world) */
-	pDA = gtk_drawing_area_new ();
-	//gtk_widget_set_size_request (pDA, 100, 100);
-	gtk_box_pack_start(GTK_BOX(hBox), pDA, FALSE, FALSE, 0);
+	dA = gtk_drawing_area_new ();
+	g_signal_connect(dA, "button_press_event", G_CALLBACK(on_buttonpress_da), NULL);
+	g_signal_connect(dA, "draw", G_CALLBACK(on_draw), NULL);
+	gtk_widget_set_events(dA, GDK_BUTTON_PRESS_MASK);
+	
+	gtk_box_pack_start(GTK_BOX(hBox), dA, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(window);
+	timeoutTag = g_timeout_add(delay, (GSourceFunc) on_timeout, NULL);
+
+	/* Initializing rule to Conway Game of life */
+	on_conway(NULL, NULL);
+
 	gtk_main();
 
 	return 0;

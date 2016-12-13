@@ -3,11 +3,18 @@
 
 #include <gtk/gtk.h>
 
-void OnNew(GtkWidget *widget, gpointer data);
-void OnOpen(GtkWidget *widget, gpointer data);
-void OnSave(GtkWidget *widget, gpointer data);
+void on_new(GtkWidget *widget, gpointer data);
+void on_open(GtkWidget *widget, gpointer data);
+void on_save(GtkWidget *widget, gpointer data);
 
-void OnHelp(GtkWidget *widget, gpointer data);
-void OnAbout(GtkWidget *widget, gpointer data);
+void on_conway(GtkWidget *widget, gpointer data);
+
+void on_help(GtkWidget *widget, gpointer data);
+void on_about(GtkWidget *widget, gpointer data);
+
+void on_buttonpress_da(GtkWidget *widget, GdkEventButton *event, gpointer data);
+void on_draw(GtkWidget *widget, cairo_t *cr, gpointer data);
+
+GSourceFunc on_timeout(GtkWidget *widget, gpointer data);
 
 #endif

@@ -8,10 +8,13 @@
 int delay = -1;
 int SIZE_X = 20; int SIZE_Y = 20;
 int **world = NULL;
-int **playWorld = NULL;
+int **worldSave = NULL;
+
 Rule *rule;
+int **(*rule_function)(int **, int, int);
 
 GtkWidget *dA;
+GtkWidget *ruleLabel;
 guint timeoutTag;
 
 int main(int argc, char *argv[]) {
@@ -21,6 +24,10 @@ int main(int argc, char *argv[]) {
 	GtkWidget *menu;
 	GtkWidget *menuItem;
 	GtkWidget *hBox;
+	GtkWidget *controlBox;
+	GtkWidget *buttonBox;
+	GtkWidget *playButton;
+	GtkWidget *stopButton;
 
 	gtk_init(&argc, &argv);
 
@@ -93,8 +100,29 @@ int main(int argc, char *argv[]) {
 	g_signal_connect(dA, "button_press_event", G_CALLBACK(on_buttonpress_da), NULL);
 	g_signal_connect(dA, "draw", G_CALLBACK(on_draw), NULL);
 	gtk_widget_set_events(dA, GDK_BUTTON_PRESS_MASK);
-	
 	gtk_box_pack_start(GTK_BOX(hBox), dA, FALSE, FALSE, 0);
+
+	/* Control Box containing play button and such */
+	controlBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_box_pack_start(GTK_BOX(hBox), controlBox, FALSE, FALSE, 0);
+
+	/* Label with rule name */
+	ruleLabel = gtk_label_new("");
+	gtk_box_pack_start(GTK_BOX(controlBox), ruleLabel, FALSE, FALSE, 0);
+
+	/* Button Box */
+	buttonBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_box_pack_start(GTK_BOX(controlBox), buttonBox, FALSE, FALSE, 0);
+
+	/* Play Button */
+	playButton = gtk_button_new_with_label("Play");
+	g_signal_connect(G_OBJECT(playButton), "button-press-event", G_CALLBACK(on_play), (GtkWidget*) window);
+	gtk_box_pack_start(GTK_BOX(buttonBox), playButton, FALSE, FALSE, 0);
+	
+	/* Stop Button */
+	stopButton = gtk_button_new_with_label("Stop");
+	g_signal_connect(G_OBJECT(stopButton), "button-press-event", G_CALLBACK(on_stop), (GtkWidget*) window);
+	gtk_box_pack_start(GTK_BOX(buttonBox), stopButton, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(window);
 	timeoutTag = g_timeout_add(delay, (GSourceFunc) on_timeout, NULL);

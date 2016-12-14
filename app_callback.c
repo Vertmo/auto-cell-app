@@ -5,15 +5,17 @@
 extern int delay;
 extern int SIZE_X; extern int SIZE_Y;
 extern int **world;
-extern int **playWorld;
+extern int **worldSave;
+
 extern Rule *rule;
+extern int **(*rule_function)(int **, int, int);
 
 extern GtkWidget *dA;
+extern GtkWidget *ruleLabel;
 extern guint timeoutTag;
 
 void on_new(GtkWidget *widget, gpointer data) {
 	gtk_widget_set_size_request(dA, SIZE_X*20, SIZE_Y*20);
-	//g_source_remove(timeoutTag);
 	int i; int j;
 	if(world) {
 		for(i=0;i<SIZE_Y;i++) free(world[i]);
@@ -40,6 +42,8 @@ void on_conway(GtkWidget *widget, gpointer data) {
 	rule = allocate_rule(rule, 2);
 	rule->colors[0][0] = 1; rule->colors[0][1] = 1; rule->colors[0][2] = 1;
 	rule->colors[1][0] = 0; rule->colors[1][1] = 0; rule->colors[1][2] = 0;
+	rule_function = &conway;
+	gtk_label_set_text(GTK_LABEL(ruleLabel), "Conway's Game of Life");
 	on_new(NULL, NULL);
 }
 
@@ -49,6 +53,35 @@ void on_help(GtkWidget *widget, gpointer data) {
 
 void on_about(GtkWidget *widget, gpointer data) {
 
+}
+
+void on_play(GtkWidget *widget, gpointer data) {
+	if(worldSave) return;
+	worldSave = (int **) malloc(SIZE_Y*sizeof(int *));
+	int i; int j;
+	for(i=0;i<SIZE_Y;i++) {
+		worldSave[i] = (int *) malloc(SIZE_X*sizeof(int));
+		for(j=0;j<SIZE_X;j++) worldSave[i][j] = world[i][j];
+	}
+
+	g_source_remove(timeoutTag);
+	delay = 100;
+	timeoutTag = g_timeout_add(delay, (GSourceFunc) on_timeout, NULL);
+}
+
+void on_stop(GtkWidget *widget, gpointer data) {
+	if(worldSave == NULL) return;
+	int i; int j;
+	for(i=0;i<SIZE_Y;i++) {
+		for(j=0;j<SIZE_X;j++) world[i][j] = worldSave[i][j];
+		free(worldSave[i]);
+	}
+	free(worldSave); worldSave = NULL;
+	
+	g_source_remove(timeoutTag);
+	delay = -1;
+	timeoutTag = g_timeout_add(delay, (GSourceFunc) on_timeout, NULL);
+	gtk_widget_queue_draw(dA);
 }
 
 void on_buttonpress_da(GtkWidget *widget, GdkEventButton *event, gpointer data) {
@@ -73,6 +106,7 @@ void on_draw(GtkWidget *widget, cairo_t *cr, gpointer data) {
 }
 
 GSourceFunc on_timeout(GtkWidget *widget, gpointer data) {
+	world = (*rule_function)(world, SIZE_X, SIZE_Y);
 	gtk_widget_queue_draw(dA);
 	return (gpointer) TRUE;
 }

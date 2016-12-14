@@ -10,6 +10,6 @@ Rule *allocate_rule(Rule *rule, int nbStates);
 
 void free_rule(Rule *rule);
 
-void conway();
+int **conway(int **world, int SIZE_X, int SIZE_Y);
 
 #endif

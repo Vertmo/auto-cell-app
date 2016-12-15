@@ -15,6 +15,7 @@ int **(*rule_function)(int **, int, int);
 
 GtkWidget *dA;
 GtkWidget *ruleLabel;
+GtkEntryBuffer *sizeBuffer;
 guint timeoutTag;
 
 int main(int argc, char *argv[]) {
@@ -28,6 +29,9 @@ int main(int argc, char *argv[]) {
 	GtkWidget *buttonBox;
 	GtkWidget *playButton;
 	GtkWidget *stopButton;
+	GtkWidget *sizeBox;
+	GtkWidget *sizeField;
+	GtkWidget *sizeButton;
 
 	gtk_init(&argc, &argv);
 
@@ -104,14 +108,17 @@ int main(int argc, char *argv[]) {
 
 	/* Control Box containing play button and such */
 	controlBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_widget_set_valign(controlBox, GTK_ALIGN_CENTER);
 	gtk_box_pack_start(GTK_BOX(hBox), controlBox, FALSE, FALSE, 0);
 
 	/* Label with rule name */
 	ruleLabel = gtk_label_new("");
+	gtk_widget_set_halign(ruleLabel, GTK_ALIGN_CENTER);
 	gtk_box_pack_start(GTK_BOX(controlBox), ruleLabel, FALSE, FALSE, 0);
 
 	/* Button Box */
 	buttonBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_widget_set_halign(buttonBox, GTK_ALIGN_CENTER);
 	gtk_box_pack_start(GTK_BOX(controlBox), buttonBox, FALSE, FALSE, 0);
 
 	/* Play Button */
@@ -123,6 +130,21 @@ int main(int argc, char *argv[]) {
 	stopButton = gtk_button_new_with_label("Stop");
 	g_signal_connect(G_OBJECT(stopButton), "button-press-event", G_CALLBACK(on_stop), (GtkWidget*) window);
 	gtk_box_pack_start(GTK_BOX(buttonBox), stopButton, FALSE, FALSE, 0);
+
+	/* Box to configure size */
+	sizeBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_widget_set_halign(sizeBox, GTK_ALIGN_CENTER);
+	gtk_box_pack_start(GTK_BOX(controlBox), sizeBox, FALSE, FALSE, 0);
+
+	/* Size field */
+	sizeBuffer = gtk_entry_buffer_new("20", 2);
+	sizeField = gtk_entry_new_with_buffer(sizeBuffer);
+	gtk_box_pack_start(GTK_BOX(sizeBox), sizeField, FALSE, FALSE, 0);
+
+	/* Submit size button */
+	sizeButton = gtk_button_new_with_label("Change Size");
+	g_signal_connect(G_OBJECT(sizeButton), "button-press-event", G_CALLBACK(on_size_change), (GtkWidget*) window);
+	gtk_box_pack_start(GTK_BOX(sizeBox), sizeButton, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(window);
 	timeoutTag = g_timeout_add(delay, (GSourceFunc) on_timeout, NULL);

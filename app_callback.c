@@ -12,9 +12,11 @@ extern int **(*rule_function)(int **, int, int);
 
 extern GtkWidget *dA;
 extern GtkWidget *ruleLabel;
+extern GtkEntryBuffer *sizeBuffer;
 extern guint timeoutTag;
 
 void on_new(GtkWidget *widget, gpointer data) {
+	on_stop(NULL, NULL);
 	gtk_widget_set_size_request(dA, SIZE_X*20, SIZE_Y*20);
 	int i; int j;
 	if(world) {
@@ -82,6 +84,16 @@ void on_stop(GtkWidget *widget, gpointer data) {
 	delay = -1;
 	timeoutTag = g_timeout_add(delay, (GSourceFunc) on_timeout, NULL);
 	gtk_widget_queue_draw(dA);
+}
+
+void on_size_change(GtkWidget *widget, gpointer data) {
+	int newSize = atoi(gtk_entry_buffer_get_text(sizeBuffer));
+	if(newSize == 0 || newSize == SIZE_X) return;
+	on_stop(NULL, NULL);
+	free_world(world, SIZE_X, SIZE_Y);
+	world = NULL;
+	SIZE_X = newSize; SIZE_Y = newSize;
+	on_new(NULL, NULL);
 }
 
 void on_buttonpress_da(GtkWidget *widget, GdkEventButton *event, gpointer data) {

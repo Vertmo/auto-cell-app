@@ -19,7 +19,7 @@ void free_rule(Rule *rule) {
 	free(rule);
 }
 
-int **copyWorld(int **world, int SIZE_X, int SIZE_Y) {
+int **copy_world(int **world, int SIZE_X, int SIZE_Y) {
 	int i; int j;
 	int **newWorld = (int **) malloc(SIZE_Y*sizeof(int *));
 	for(i=0;i<SIZE_Y;i++) {
@@ -31,7 +31,7 @@ int **copyWorld(int **world, int SIZE_X, int SIZE_Y) {
 	return newWorld;
 }
 
-void freeWorld(int **world, int SIZE_X, int SIZE_Y) {
+void free_world(int **world, int SIZE_X, int SIZE_Y) {
 	if(world == NULL) return;
 	int i;
 	for(i=0;i<SIZE_Y;i++) free(world[i]);
@@ -39,7 +39,7 @@ void freeWorld(int **world, int SIZE_X, int SIZE_Y) {
 }
 
 int **conway(int **world, int SIZE_X, int SIZE_Y) {
-	int **newWorld = copyWorld(world, SIZE_X, SIZE_Y);
+	int **newWorld = copy_world(world, SIZE_X, SIZE_Y);
 	int i; int j; int left; int right; int top; int bottom; int sum;
 	for(i=0;i<SIZE_Y;i++) {
 		for(j=0;j<SIZE_X;j++) {
@@ -57,6 +57,6 @@ int **conway(int **world, int SIZE_X, int SIZE_Y) {
 			}
 		}
 	}
-	freeWorld(world, SIZE_X, SIZE_Y);
+	free_world(world, SIZE_X, SIZE_Y);
 	return newWorld;
 }

@@ -7,6 +7,7 @@
 
 int delay = -1;
 int SIZE_X = 20; int SIZE_Y = 20;
+int drawGrid = 1;
 int **world = NULL;
 int **worldSave = NULL;
 
@@ -15,7 +16,8 @@ int **(*rule_function)(int **, int, int);
 
 GtkWidget *dA;
 GtkWidget *ruleLabel;
-GtkEntryBuffer *sizeBuffer;
+GtkEntryBuffer *sizeXBuffer;
+GtkEntryBuffer *sizeYBuffer;
 guint timeoutTag;
 
 int main(int argc, char *argv[]) {
@@ -30,7 +32,8 @@ int main(int argc, char *argv[]) {
 	GtkWidget *playButton;
 	GtkWidget *stopButton;
 	GtkWidget *sizeBox;
-	GtkWidget *sizeField;
+	GtkWidget *sizeXField;
+	GtkWidget *sizeYField;
 	GtkWidget *sizeButton;
 
 	gtk_init(&argc, &argv);
@@ -136,10 +139,16 @@ int main(int argc, char *argv[]) {
 	gtk_widget_set_halign(sizeBox, GTK_ALIGN_CENTER);
 	gtk_box_pack_start(GTK_BOX(controlBox), sizeBox, FALSE, FALSE, 0);
 
-	/* Size field */
-	sizeBuffer = gtk_entry_buffer_new("20", 2);
-	sizeField = gtk_entry_new_with_buffer(sizeBuffer);
-	gtk_box_pack_start(GTK_BOX(sizeBox), sizeField, FALSE, FALSE, 0);
+	/* Size fields */
+	sizeXBuffer = gtk_entry_buffer_new("20", 2);
+	sizeXField = gtk_entry_new_with_buffer(sizeXBuffer);
+	gtk_entry_set_width_chars(GTK_ENTRY(sizeXField), 3);
+	gtk_box_pack_start(GTK_BOX(sizeBox), sizeXField, FALSE, FALSE, 0);
+	
+	sizeYBuffer = gtk_entry_buffer_new("20", 2);
+	sizeYField = gtk_entry_new_with_buffer(sizeYBuffer);
+	gtk_entry_set_width_chars(GTK_ENTRY(sizeYField), 3);
+	gtk_box_pack_start(GTK_BOX(sizeBox), sizeYField, FALSE, FALSE, 0);
 
 	/* Submit size button */
 	sizeButton = gtk_button_new_with_label("Change Size");

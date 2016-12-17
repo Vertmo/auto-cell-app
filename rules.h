@@ -2,6 +2,7 @@
 #define _RULES_H_
 
 typedef struct {
+	char name[40];
 	int nbStates;
 	float **colors;
 } Rule;

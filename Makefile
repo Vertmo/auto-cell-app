@@ -9,8 +9,11 @@ app_callback.o : app_callback.c app_callback.h
 rules.o : rules.c rules.h
 	gcc -c -o rules.o rules.c
 
-auto_cell_app : app.o app_callback.o rules.o
-	gcc -o auto_cell_app app.o app_callback.o rules.o `pkg-config --libs gtk+-3.0`
+automatonIO.o : automatonIO.c automatonIO.h
+	gcc -c -o automatonIO.o automatonIO.c `pkg-config --cflags gtk+-3.0`
+
+auto_cell_app : app.o app_callback.o rules.o automatonIO.o
+	gcc -o auto_cell_app app.o app_callback.o rules.o automatonIO.o `pkg-config --libs gtk+-3.0`
 
 clean : 
 	rm *.o auto_cell_app

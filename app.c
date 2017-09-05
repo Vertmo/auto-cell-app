@@ -77,6 +77,10 @@ int main(int argc, char *argv[]) {
 	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(on_conway), (GtkWidget*) window);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuItem);
 
+	menuItem = gtk_menu_item_new_with_mnemonic("_Wireworld");
+	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(on_wireworld), (GtkWidget*) window);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuItem);
+
 	menuItem = gtk_menu_item_new_with_mnemonic("_Rule");
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuItem), menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menuBar), menuItem);

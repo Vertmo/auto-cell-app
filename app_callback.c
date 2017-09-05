@@ -72,7 +72,7 @@ void on_save(GtkWidget *widget, gpointer data) {
 				      NULL,
 				      GTK_FILE_CHOOSER_ACTION_SAVE,
 				      ("_Cancel"), GTK_RESPONSE_CANCEL,
-				      ("_Open"), GTK_RESPONSE_ACCEPT,
+				      ("_Save"), GTK_RESPONSE_ACCEPT,
 				      NULL);
 
 	chooser = GTK_FILE_CHOOSER(dialog);
@@ -103,6 +103,19 @@ void on_conway(GtkWidget *widget, gpointer data) {
 	rule->colors[1][0] = 0; rule->colors[1][1] = 0; rule->colors[1][2] = 0;
 	rule_function = &conway;
 	gtk_label_set_text(GTK_LABEL(ruleLabel), "Conway's Game of Life");
+	on_new(NULL, NULL);
+}
+
+void on_wireworld(GtkWidget *widget, gpointer data) {
+	free_rule(rule);
+	rule = allocate_rule(rule, 4);
+	strcpy(rule->name, "wireworld");
+	rule->colors[0][0] = 0; rule->colors[0][1] = 0; rule->colors[0][2] = 0;
+	rule->colors[1][0] = 1; rule->colors[1][1] = 1; rule->colors[1][2] = 0;
+	rule->colors[2][0] = 1; rule->colors[2][1] = 0; rule->colors[2][2] = 0;
+	rule->colors[3][0] = 0; rule->colors[3][1] = 0; rule->colors[3][2] = 1;
+	rule_function = &wireworld;
+	gtk_label_set_text(GTK_LABEL(ruleLabel), "Wireworld");
 	on_new(NULL, NULL);
 }
 
@@ -156,10 +169,9 @@ void on_size_change(GtkWidget *widget, gpointer data) {
 
 void on_buttonpress_da(GtkWidget *widget, GdkEventButton *event, gpointer data) {
 	if(delay != -1) return;
-	int nbStates = 2; //A effacer quand les regles seront programmees !
 	int x = (int) event->x / 20; int y = (int) event->y / 20;
 	world[y][x]++;
-	if (world[y][x] >= nbStates) world[y][x] = 0;
+	if (world[y][x] >= rule->nbStates) world[y][x] = 0;
 	gtk_widget_queue_draw(dA);
 }
 

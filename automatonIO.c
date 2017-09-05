@@ -26,6 +26,7 @@ void open_automaton(char *filename) {
 	char ruleName[40];
 	fscanf(f, "%s\n", ruleName);
 	if(strcmp(ruleName, "conway")==0) on_conway();
+	else if(strcmp(ruleName, "wireworld")==0) on_wireworld();
 
 	int i; int j;
 	for(i=0;i<SIZE_Y;i++) {

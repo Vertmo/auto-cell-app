@@ -60,3 +60,30 @@ int **conway(int **world, int SIZE_X, int SIZE_Y) {
 	free_world(world, SIZE_X, SIZE_Y);
 	return newWorld;
 }
+
+int **wireworld(int **world, int SIZE_X, int SIZE_Y) {
+	int **newWorld = copy_world(world, SIZE_X, SIZE_Y);
+	int i; int j;
+	for(i=0;i<SIZE_Y;i++) {
+		for(j=0;j<SIZE_X;j++) {
+			if(world[i][j] == 0) newWorld[i][j] = 0;
+			else if(world[i][j] == 1) {
+				int sum = 0;
+				if(i > 0 && j > 0 && world[i-1][j-1] == 2) sum++;
+				if(i > 0 && world[i-1][j] == 2) sum++;
+				if(i > 0 && j < SIZE_X-1 && world[i-1][j+1] == 2) sum++;
+				if(j > 0 && world[i][j-1] == 2) sum++;
+				if(j < SIZE_X-1 && world[i][j+1] == 2) sum++;
+				if(i < SIZE_Y - 1 && j > 0 && world[i+1][j-1] == 2) sum++;
+				if(i < SIZE_Y - 1 && world[i+1][j] == 2) sum++;
+				if(i < SIZE_Y - 1 && j < SIZE_X - 1 && world[i+1][j+1] == 2) sum++;
+
+				if(sum == 1 || sum == 2) newWorld[i][j] = 2;
+			}
+			else if(world[i][j] == 2) newWorld[i][j] = 3;
+			else if(world[i][j] == 3) newWorld[i][j] = 1;
+		}
+	}
+	free_world(world, SIZE_X, SIZE_Y);
+	return newWorld;
+}

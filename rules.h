@@ -15,4 +15,6 @@ void free_world(int **world, int SIZE_X, int SIZE_Y);
 
 int **conway(int **world, int SIZE_X, int SIZE_Y);
 
+int **wireworld(int **world, int SIZE_X, int SIZE_Y);
+
 #endif

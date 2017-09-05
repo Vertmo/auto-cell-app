@@ -8,6 +8,7 @@ void on_open(GtkWidget *widget, gpointer data);
 void on_save(GtkWidget *widget, gpointer data);
 
 void on_conway(GtkWidget *widget, gpointer data);
+void on_wireworld(GtkWidget *widget, gpointer data);
 
 void on_help(GtkWidget *widget, gpointer data);
 void on_about(GtkWidget *widget, gpointer data);
